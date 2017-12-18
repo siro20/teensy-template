@@ -33,6 +33,10 @@
 
 #if F_CPU >= 20000000
 
+#ifdef EHCI_DEBUG_INTERFACE
+usb_ehci_debug_class EhciDebug;
+#endif
+
 #ifdef CDC_DATA_INTERFACE
 #ifdef CDC_STATUS_INTERFACE
 usb_serial_class Serial;

@@ -99,6 +99,14 @@ static uint8_t device_descriptor[] = {
 // while the processor is executing from flash.
 
 
+#ifdef EHCI_DEBUG_INTERFACE
+static uint8_t ehcidebug_report_desc[] = {
+        4,                        // bLength
+        10,                       // bDescriptorType
+        EHCI_DEBUG_TX_ENDPOINT | 0x80, // bDebugInEndpoint
+        EHCI_DEBUG_RX_ENDPOINT         // bDebugOutEndpoint
+};
+#endif
 
 // **************************************************************
 //   HID Report Descriptors
@@ -389,7 +397,14 @@ static uint8_t flightsim_report_desc[] = {
 //
 #define CONFIG_HEADER_DESCRIPTOR_SIZE	9
 
-#define CDC_IAD_DESCRIPTOR_POS		CONFIG_HEADER_DESCRIPTOR_SIZE
+#define EHCI_DEBUG_INTERFACE_POS		CONFIG_HEADER_DESCRIPTOR_SIZE
+#ifdef  EHCI_DEBUG_INTERFACE
+#define EHCI_DEBUG_INTERFACE_SIZE		9+7+7
+#else
+#define EHCI_DEBUG_INTERFACE_SIZE		0
+#endif
+
+#define CDC_IAD_DESCRIPTOR_POS		EHCI_DEBUG_INTERFACE_POS+EHCI_DEBUG_INTERFACE_SIZE
 #ifdef  CDC_IAD_DESCRIPTOR
 #define CDC_IAD_DESCRIPTOR_SIZE		8
 #else
@@ -509,6 +524,33 @@ static uint8_t config_descriptor[CONFIG_DESC_SIZE] = {
         0,                                      // iConfiguration
         0xC0,                                   // bmAttributes
         50,                                     // bMaxPower
+
+#ifdef EHCI_DEBUG_INTERFACE
+        // interface descriptor, USB spec 9.6.5, page 267-269, Table 9-12
+        9,                               // bLength
+        4,                               // bDescriptorType
+        EHCI_DEBUG_INTERFACE,            // bInterfaceNumber
+        0,                               // bAlternateSetting
+        2,                               // bNumEndpoints
+        0xff,                            // bInterfaceClass (Vendor Specific)
+        0x00,                            // bInterfaceSubClass
+        0x00,                            // bInterfaceProtocol
+        0,                               // iInterface
+        // Endpoint 1
+        7,                               // bLength
+        5,                               // bDescriptorType
+        EHCI_DEBUG_RX_ENDPOINT,          // bEndpointAddress
+        2,                               // bmAttributes
+        EHCI_DEBUG_RX_SIZE,0x00,         // wMaxPacketSize
+        0,                               // bInterval
+        // Endpoint 2
+        7,                                // bLength
+        5,                                // bDescriptorType
+        EHCI_DEBUG_TX_ENDPOINT | 0x80,    // bEndpointAddress
+        2,                                // bmAttributes
+        EHCI_DEBUG_TX_SIZE,0x00,          // wMaxPacketSize
+        0,                                // bInterval
+#endif
 
 #ifdef CDC_IAD_DESCRIPTOR
         // interface association descriptor, USB ECN, Table 9-Z
@@ -1269,6 +1311,9 @@ const usb_descriptor_list_t usb_descriptor_list[] = {
 	//wValue, wIndex, address,          length
 	{0x0100, 0x0000, device_descriptor, sizeof(device_descriptor)},
 	{0x0200, 0x0000, config_descriptor, sizeof(config_descriptor)},
+#ifdef EHCI_DEBUG_INTERFACE
+        {0x0a00, EHCI_DEBUG_INTERFACE, ehcidebug_report_desc, sizeof(ehcidebug_report_desc)},
+#endif
 #ifdef SEREMU_INTERFACE
 	{0x2200, SEREMU_INTERFACE, seremu_report_desc, sizeof(seremu_report_desc)},
 	{0x2100, SEREMU_INTERFACE, config_descriptor+SEREMU_HID_DESC_OFFSET, 9},

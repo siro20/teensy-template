@@ -113,8 +113,28 @@ If these instructions are missing steps or could be improved, please
 let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 */
 
+#if defined(USB_EHCI_DONGLE)
+  #define VENDOR_ID		0x0525
+  #define PRODUCT_ID		0x127a
+  #define DEVICE_CLASS		255	// 255 = Vendor Specific Class
+  #define MANUFACTURER_NAME	{'T','e','e','n','s','y',' ','L','C'}
+  #define MANUFACTURER_NAME_LEN	9
+  #define PRODUCT_NAME		{'U','S','B',' ','2','.','0',' ','D','e','b','u','g',' ','C','a','b','l','e'}
+  #define PRODUCT_NAME_LEN	19
+  #define EP0_SIZE		8
+  #define NUM_ENDPOINTS		3
+  #define NUM_USB_BUFFERS	12
+  #define NUM_INTERFACE		1
+  #define EHCI_DEBUG_INTERFACE 0
+  #define EHCI_DEBUG_STATUS_ENDPOINT      1
+  #define EHCI_DEBUG_RX_ENDPOINT       3
+  #define EHCI_DEBUG_TX_ENDPOINT       2
+  #define EHCI_DEBUG_RX_SIZE           8
+  #define EHCI_DEBUG_TX_SIZE           8
+  #define ENDPOINT2_CONFIG	ENDPOINT_TRANSIMIT_ONLY
+  #define ENDPOINT3_CONFIG	ENDPOINT_RECEIVE_ONLY
 
-#if defined(USB_SERIAL)
+#elif defined(USB_SERIAL)
   #define VENDOR_ID		0x16C0
   #define PRODUCT_ID		0x0483
   #define DEVICE_CLASS		2	// 2 = Communication Class

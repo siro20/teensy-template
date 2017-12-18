@@ -1,21 +1,18 @@
-Teensy 3.X Project Template
-===========================
+Teensy 3.X Project Template with USB EHCI debug support
+=======================================================
+
+Thanks
+-------
+Many thanks to Austin Morton for the great Teensy 3.X project template.
 
 Purpose
 -------
 
-An easy starting point for a Teensy 3.X project which might not fit inside the
-arduino build environment.
+An easy starting point for a Teensy 3.X project for dbgp devices.
+The Teensy shows up as debug device and the kernel module usb_debug allows to use it
+as serial bridge.
 
-
-Reasons to Use
---------------
-
-- You need to modify the teensy core
-- You don't love Java IDE's
-- You love Make
-- Because
-
+Note: You need a USB high speed capable Teensy to use it on an EHCI debug port. It doesn't work with Teensy LC.
 
 Setup
 -----
@@ -24,6 +21,7 @@ Install the Teensy udev rule: `sudo cp tools/49-teensy.rules /etc/udev/rules.d/`
 
 Then unplug your Teensy and plug it back in.
 
+Connect a TTL UART to Serial2 running at 115200.
 
 Using
 -----
@@ -61,3 +59,5 @@ Modifications to `Makefile` include
 - Calculate target name from current directory
 - Prettify rule output
 - Do not upload by default, only build
+- Changed default target to Teensy LC
+- Set default USB stack to EHCI_DEBUG

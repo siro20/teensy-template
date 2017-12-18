@@ -860,6 +860,13 @@ void usb_isr(void)
 				usb_reboot_timer = --t;
 				if (!t) _reboot_Teensyduino_();
 			}
+#ifdef EHCI_DEBUG_INTERFACE
+			t = usb_ehci_transmit_flush_timer;
+			if (t) {
+				usb_ehci_transmit_flush_timer = --t;
+				if (t == 0) usb_ehci_debug_flush_callback();
+			}
+#endif
 #ifdef CDC_DATA_INTERFACE
 			t = usb_cdc_transmit_flush_timer;
 			if (t) {
